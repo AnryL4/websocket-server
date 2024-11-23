@@ -12,6 +12,15 @@ server.on('connection', ws => {
 	ws.send(JSON.stringify(messages));
 
 	ws.on('message', message => {
+		if (JSON.parse(message) === 'clearAll') {
+			messages.length = 0;
+			clients.forEach(client => {
+				if (client.readyState === WebSocket.OPEN) {
+					client.send(JSON.stringify(messages));
+				}
+			});
+			return;
+		}
 		messages.push(JSON.parse(message));
 
 		clients.forEach(client => {
